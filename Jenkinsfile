@@ -103,12 +103,13 @@ pipeline {
         stage("Image push into Github"){
             steps{
                 script{
-                    sh "cd ~/Netflix/ && 'sed -i .spec.template.spec.containers[0].image= \${REGISTRY_NAME}/${IMAGE_NAME}:${BUILD_ID}\"' ~/Netflix/AWS-EKS-CLUSTER/manifestFiles/deployment.yaml"
+                    sh "cd ~/Netflix/ && yq eval -i '.spec.template.spec.containers[0].image= \${REGISTRY_NAME}/${IMAGE_NAME}:${BUILD_ID}\"' ~/Netflix/AWS-EKS-CLUSTER/manifestFiles/deployment.yaml"
                     sh '''
-                     cd ~/Netflix/AWS-EKS-CLUSTER/manifestFiles/deployment.yaml"
-                     git add ~/Netflix/AWS-EKS-CLUSTER/manifestFiles/deployment.yaml"
+                     cd ~/Netflix/
+                     git add ~/Netflix/AWS-EKS-CLUSTER/manifestFiles/deployment.yaml
                      git commit -m "changes for manifestfiles"
                      git push -u origin main
+                     docker rmi ${REGISTRY_NAME}/${IMAGE_NAME}:${BUILD_ID}
                     '''
                 }
             }
