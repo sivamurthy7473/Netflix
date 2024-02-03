@@ -85,7 +85,6 @@ pipeline {
                     echo "TMDB_V3_API_KEY: ${TMDB_V3_API_KEY}"
                     docker login -u ${REGISTRY_NAME} -p ${password}
                     docker image build --build-arg TMDB_V3_API_KEY=${TMDB_DB_API_KEY} -t ${REGISTRY_NAME}/${IMAGE_NAME}:${BUILD_ID} .
-
                     '''
                 }
             }
@@ -101,16 +100,14 @@ pipeline {
             }
         }
         stage("Image push into Github"){
-            steps{
-                dir('Netflix')
-                sh "cd ~/Netflix/ && yq eval -i '.spec.template.spec.containers[0].image= \${REGISTRY_NAME}/${IMAGE_NAME}:${BUILD_ID}\"' ~/Netflix/AWS-EKS-CLUSTER/manifestFiles/deployment.yaml"
-                sh '''
-                 cd ~/Netflix/
-                 git add ~/Netflix/AWS-EKS-CLUSTER/manifestFiles/deployment.yaml
-                 git commit -m "changes for manifestfiles"
-                 git push -u origin main
-                 docker rmi ${REGISTRY_NAME}/${IMAGE_NAME}:${BUILD_ID}
-                '''
+            steps {
+                sh "cd ~/orderops && yq eval -i '.spec.template.spec.containers[0].image= \"${REGISTRY_NAME}/${IMAGE_NAME}:${BUILD_ID}\" ' ~/orderops/manifests/orderdeploy.yaml"
+                sh """
+                  cd ~/orderops
+                  git add ~/orderops/manifests/orderdeploy.yaml
+                  git commit -m "added new change"
+                  git push origin main
+                """
             }
         }
         stage("Terraform Init"){
