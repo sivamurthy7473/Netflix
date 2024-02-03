@@ -99,17 +99,17 @@ pipeline {
                 sh 'cat trvyscan.txt'
             }
         }
-        stage("Image push into Github"){
-            steps {
-                sh "cd ~/orderops && yq eval -i '.spec.template.spec.containers[0].image= \"${REGISTRY_NAME}/${IMAGE_NAME}:${BUILD_ID}\" ' ~/orderops/manifests/orderdeploy.yaml"
-                sh """
-                  cd ~/orderops
-                  git add ~/orderops/manifests/orderdeploy.yaml
-                  git commit -m "added new change"
-                  git push origin main
-                """
-            }
-        }
+        // stage("Image push into Github"){
+        //     steps {
+        //         sh "cd ~/orderops && yq eval -i '.spec.template.spec.containers[0].image= \"${REGISTRY_NAME}/${IMAGE_NAME}:${BUILD_ID}\" ' ~/orderops/manifests/orderdeploy.yaml"
+        //         sh """
+        //           cd ~/orderops
+        //           git add ~/orderops/manifests/orderdeploy.yaml
+        //           git commit -m "added new change"
+        //           git push origin main
+        //         """
+        //     }
+        // }
         stage("Terraform Init"){
             steps {
                 script{
