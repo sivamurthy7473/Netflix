@@ -150,7 +150,7 @@ pipeline {
                 }
             }
         }
-        stage("Deploy Kubernetes Manifests"){
+        stage("Deploy Kubernetes Manifest Files"){
             steps{
                script{
                   dir('AWS-EKS-CLUSTER/manifestFiles') {
