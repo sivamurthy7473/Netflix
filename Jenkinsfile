@@ -100,6 +100,19 @@ pipeline {
                 sh 'cat trvyscan.txt'
             }
         }
+        stage("Image push into Github"){
+            steps{
+                script{
+                    sh "cd ~/Netflix/ && 'sed -i .spec.template.spec.containers[0].image= \${REGISTRY_NAME}/${IMAGE_NAME}:${BUILD_ID}\"' ~/Netflix/AWS-EKS-CLUSTER/manifestFiles/deployment.yaml"
+                    sh '''
+                     cd ~/Netflix/AWS-EKS-CLUSTER/manifestFiles/deployment.yaml"
+                     git add ~/Netflix/AWS-EKS-CLUSTER/manifestFiles/deployment.yaml"
+                     git commit -m "changes for manifestfiles"
+                     git push -u origin main
+                    '''
+                }
+            }
+        }
         stage("Terraform Init"){
             steps {
                 script{
@@ -156,7 +169,7 @@ pipeline {
                script{
                   dir('AWS-EKS-CLUSTER/manifestFiles') {
                      sh'''
-                        aws eks update-kubeconfig --name eks-cluste --region us-west-1
+                        aws eks update-kubeconfig --name eks-cluster --region us-west-1
                         kubectl apply -f deployment.yaml
                         kubectl apply -f service.yaml
                        '''
